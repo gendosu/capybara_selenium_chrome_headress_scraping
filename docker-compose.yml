@@ -1,0 +1,43 @@
+version: "2"
+
+volumes:
+  postgres:
+
+services:
+
+  app:
+    build: .
+
+    depends_on:
+      - postgres
+
+    volumes:
+      - .:/app
+      - postgres:/var/run/postgresql
+
+    ports:
+      - "3010:3000"
+      - "3040:3030"
+
+    environment:
+      RAILS_ENV: development
+      PORT: 3000
+
+    command: foreman start -f Procfile
+
+  #
+  # PostgreSQL
+  #
+  postgres:
+    image: postgres:9.6.8
+
+    environment:
+      - "POSTGRES_USER=root"
+
+    volumes:
+      # - "./Dockerfiles/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
+      - postgres:/var/run/postgresql
+      - .:/products
+
+    # ports:
+    #   - "127.0.0.1:5432:5432"
